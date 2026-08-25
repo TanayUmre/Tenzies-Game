@@ -1,18 +1,55 @@
-# React + Vite
+🎲 Tenzies Game
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A fun and interactive Tenzies dice game built with React and Vite.
 
-Currently, two official plugins are available:
+🎮 About the Game
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Tenzies is a fast-paced dice game where the goal is to get all 10 dice showing the same number.
 
-## React Compiler
+On each turn:
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+Roll the dice.
+Choose which dice you want to keep.
+Click Roll to roll the remaining dice.
+Keep repeating until all 10 dice have the same value.
+Try to complete the game in as few rolls as possible!
+✨ Features
+🎲 Roll 10 dice at once
+🔒 Hold individual dice
+🏆 Win when all dice match
+🔄 Start a new game
+📊 Track the number of rolls
+⚡ Fast and responsive gameplay
+📱 Works on desktop and mobile
+🛠️ Built With
+React
+Vite
+JavaScript
+CSS
+🚀 Getting Started
 
-Note: This will impact Vite dev & build performances.
+Clone the repository and install the dependencies:
 
-## Expanding the Oxlint configuration
+npm install
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+
+Start the development server:
+
+npm run dev
+
+
+Then open the local development URL shown in your terminal.
+
+📦 Build for Production
+npm run build
+
+
+To preview the production build:
+
+npm run preview
+
+🎯 Goal
+
+Can you get all 10 dice to match in the fewest rolls possible?
+
+Good luck and have fun! 🎲
