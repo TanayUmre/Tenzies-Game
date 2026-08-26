@@ -40,6 +40,7 @@ src/
 ├── components/
 │   ├── css/
 │   │   └── app.css
+│   │   └── die.css
 │   └── pages/
 │       └── App.jsx
 └── main.jsx
