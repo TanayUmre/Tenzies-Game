@@ -2,18 +2,32 @@ import "../css/app.css"
 import Die from "./die"
 import {useState} from "react"
 import {nanoid} from "nanoid"
+import Confetti from "react-confetti-boom"
 
 export default function App() {
 
-    const [dice,newdice]=useState(generateArray());
+    const [dice,newdice]=useState(()=>generateArray());
+
+    const gamewon=(dice.every(die=>die.isheld) && dice.every(die=>die.value===dice[0].value));
+
+    function rollDie() {
+        return Math.ceil(Math.random()*6);
+    }
 
     function generateArray(){
-        return new Array(10).fill(0).map(()=>({value:Math.ceil(Math.random()*6),isheld:false,id:nanoid()}));
+        return new Array(10).fill(0).map(()=>({value:rollDie(),isheld:false,id:nanoid()}));
     }
 
     function roll()
     {
-        newdice(oldice=>oldice.map(die=>die.isheld?die:{...die,value:Math.ceil(Math.random()*6)}))
+        if(!gamewon)
+        {
+            newdice(oldice=>oldice.map(die=>die.isheld?die:{...die,value:rollDie()}));
+        }
+        else
+        {
+            newdice(generateArray());
+        }
     }
 
     function hold(id){
@@ -34,12 +48,22 @@ export default function App() {
 
     return (
         <main>
+            {gamewon && <Confetti mode="fall" particleCount={500} colors={['#ff577f', '#ff884b']}/>}
+            <div aria-live="polite" className="sronly">
+                {gamewon && <p>CONGRATULATION YOu WON!!! Press New Game to start another game.</p>}
+            </div>
             <h1 className="title">Tenzie</h1>
-            <p className="instruction">Roll until all dice are the same. Click each die to freeze it at its current value between rolls.</p>
+            <p className="instruction">
+                {gamewon
+                    ? "Congratulations! You won! Press New Game to start another game."
+                    : "Roll until all dice are the same. Click each die to freeze it at its current value between rolls."
+                }
+            </p>
+
             <div className="dice-cont">
                 {arr}
             </div>
-            <button className="roll-dice" onClick={roll}>Roll</button>
+            <button className="roll-dice" onClick={roll}>{gamewon?"New Game":"Roll"}</button>
         </main>
     )
 }
