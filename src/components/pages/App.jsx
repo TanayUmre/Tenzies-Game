@@ -1,6 +1,6 @@
 import "../css/app.css"
 import Die from "./die"
-import {useState} from "react"
+import {useState,useRef,useEffect} from "react"
 import {nanoid} from "nanoid"
 import Confetti from "react-confetti-boom"
 
@@ -10,6 +10,14 @@ export default function App() {
 
     const gamewon=(dice.every(die=>die.isheld) && dice.every(die=>die.value===dice[0].value));
 
+    const buttonref=useRef(null);
+
+    useEffect(()=>{
+        if(gamewon){
+            buttonref.current.focus();
+        }
+    },[gamewon]);
+    
     function rollDie() {
         return Math.ceil(Math.random()*6);
     }
@@ -63,7 +71,7 @@ export default function App() {
             <div className="dice-cont">
                 {arr}
             </div>
-            <button className="roll-dice" onClick={roll}>{gamewon?"New Game":"Roll"}</button>
+            <button className="roll-dice" onClick={roll} ref={buttonref}>{gamewon?"New Game":"Roll"}</button>
         </main>
     )
 }
