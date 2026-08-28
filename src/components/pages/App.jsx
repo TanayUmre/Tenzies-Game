@@ -6,7 +6,11 @@ import Confetti from "react-confetti-boom"
 
 export default function App() {
 
-    const [dice,newdice]=useState(()=>generateArray());
+    const [dice,newdice]=useState(()=>generateArray(10));
+
+    const [difficulty,setDifficulty]=useState("normal");
+
+    const diceCount={easy:8, normal:10, hard:12}[difficulty];
 
     const gamewon=(dice.every(die=>die.isheld) && dice.every(die=>die.value===dice[0].value));
 
@@ -22,9 +26,13 @@ export default function App() {
         return Math.ceil(Math.random()*6);
     }
 
-    function generateArray(){
-        return new Array(10).fill(0).map(()=>({value:rollDie(),isheld:false,id:nanoid()}));
+    function generateArray(count){
+        return new Array(count).fill(0).map(()=>({value:rollDie(),isheld:false,id:nanoid()}));
     }
+
+    useEffect(()=>{
+        newdice(generateArray(diceCount));
+    },[difficulty]);
 
     function roll()
     {
@@ -34,7 +42,7 @@ export default function App() {
         }
         else
         {
-            newdice(generateArray());
+            newdice(generateArray(diceCount));
         }
     }
 
@@ -56,10 +64,6 @@ export default function App() {
 
     return (
         <main>
-            {gamewon && <Confetti mode="fall" particleCount={500} colors={['#ff577f', '#ff884b']}/>}
-            <div aria-live="polite" className="sronly">
-                {gamewon && <p>CONGRATULATION YOu WON!!! Press New Game to start another game.</p>}
-            </div>
             <h1 className="title">Tenzie</h1>
             <p className="instruction">
                 {gamewon
@@ -67,8 +71,45 @@ export default function App() {
                     : "Roll until all dice are the same. Click each die to freeze it at its current value between rolls."
                 }
             </p>
+            <fieldset className="difficulty">
+                <legend className="name-diff">Difficulty</legend>
+                <label>
+                    <input
+                        type="radio"
+                        name="difficulty"
+                        value="easy"
+                        checked={difficulty==="easy"}
+                        onChange={(e)=>setDifficulty(e.target.value)}
+                    />
+                    Easy
+                </label>
+                <label>
+                    <input
+                        type="radio"
+                        name="difficulty"
+                        value="normal"
+                        checked={difficulty==="normal"}
+                        onChange={(e)=>setDifficulty(e.target.value)}
+                    />
+                    Normal
+                </label>
+                <label>
+                    <input
+                        type="radio"
+                        name="difficulty"
+                        value="hard"
+                        checked={difficulty==="hard"}
+                        onChange={(e)=>setDifficulty(e.target.value)}
+                    />
+                    Hard
+                </label>
+            </fieldset>
+            {gamewon && <Confetti mode="fall" particleCount={150} colors={['#ff577f', '#ff884b']}/>}
+            <div aria-live="polite" className="sronly">
+                {gamewon && <p>CONGRATULATION YOu WON!!! Press New Game to start another game.</p>}
+            </div>
 
-            <div className="dice-cont">
+            <div className={`dice-cont ${difficulty}`}>
                 {arr}
             </div>
             <button className="roll-dice" onClick={roll} ref={buttonref}>{gamewon?"New Game":"Roll"}</button>
