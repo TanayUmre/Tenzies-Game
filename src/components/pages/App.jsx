@@ -10,6 +10,10 @@ export default function App() {
 
     const [difficulty,setDifficulty]=useState("normal");
 
+    const [time,setTime]=useState(0);
+
+    const [timerRunning,setTimerRunning]=useState(false);
+
     const diceCount={easy:8, normal:10, hard:12}[difficulty];
 
     const gamewon=(dice.every(die=>die.isheld) && dice.every(die=>die.value===dice[0].value));
@@ -22,6 +26,38 @@ export default function App() {
         }
     },[gamewon]);
     
+    useEffect(()=>{
+        newdice(generateArray(diceCount));
+        setTime(0);
+        setTimerRunning(false);
+    },[diceCount]);
+
+    useEffect(()=>{
+        if(!timerRunning)
+        {
+            return;
+        }
+        const timer=setInterval(()=>{
+            setTime(prev=>prev+10);
+        },10);
+        return ()=>clearInterval(timer);
+    },[timerRunning])
+
+    useEffect(()=>{
+        if(gamewon)
+        {
+            setTimerRunning(false);
+        }
+    },[gamewon]);
+
+    function formattime(milliseconds){
+        const min=Math.floor(milliseconds/60000);
+        const remsec=Math.floor((milliseconds%60000)/1000);
+        const millisec=milliseconds%1000;
+
+        return `${String(min).padStart(2,"0")}:${String(remsec).padStart(2,"0")}:${String(millisec).padStart(3,"0")}`;
+    }
+
     function rollDie() {
         return Math.ceil(Math.random()*6);
     }
@@ -30,19 +66,22 @@ export default function App() {
         return new Array(count).fill(0).map(()=>({value:rollDie(),isheld:false,id:nanoid()}));
     }
 
-    useEffect(()=>{
-        newdice(generateArray(diceCount));
-    },[difficulty]);
 
     function roll()
     {
         if(!gamewon)
         {
+            if(!timerRunning)
+            {
+                setTimerRunning(true);
+            }
             newdice(oldice=>oldice.map(die=>die.isheld?die:{...die,value:rollDie()}));
         }
         else
         {
             newdice(generateArray(diceCount));
+            setTime(0);
+            setTimerRunning(false);
         }
     }
 
@@ -104,6 +143,9 @@ export default function App() {
                     Hard
                 </label>
             </fieldset>
+            <p className="timer">
+                Time: {formattime(time)}
+            </p>
             {gamewon && <Confetti mode="fall" particleCount={150} colors={['#ff577f', '#ff884b']}/>}
             <div aria-live="polite" className="sronly">
                 {gamewon && <p>CONGRATULATION YOu WON!!! Press New Game to start another game.</p>}

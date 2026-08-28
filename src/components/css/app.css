@@ -33,6 +33,10 @@ main{
 .difficulty{
     font-family: "Karla",sans-serif;
     font-weight: 550;
+    margin-bottom: 10px;
+}
+
+.timer{
     margin-bottom: 30px;
 }
 
