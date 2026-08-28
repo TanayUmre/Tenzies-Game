@@ -55,7 +55,7 @@ export default function App() {
         const remsec=Math.floor((milliseconds%60000)/1000);
         const millisec=milliseconds%1000;
 
-        return `${String(min).padStart(2,"0")}:${String(remsec).padStart(2,"0")}:${String(millisec).padStart(3,"0")}`;
+        return `${String(min).padStart(2,"0")}:${String(remsec).padStart(2,"0")}.${String(millisec).padStart(3,"0")}`;
     }
 
     function rollDie() {
@@ -71,10 +71,6 @@ export default function App() {
     {
         if(!gamewon)
         {
-            if(!timerRunning)
-            {
-                setTimerRunning(true);
-            }
             newdice(oldice=>oldice.map(die=>die.isheld?die:{...die,value:rollDie()}));
         }
         else
@@ -86,6 +82,14 @@ export default function App() {
     }
 
     function hold(id){
+        if(gamewon)
+        {
+            return;
+        }
+        if(!timerRunning)
+        {
+            setTimerRunning(true);
+        }
         newdice(olddice=>olddice.map(die=>
                 die.id===id?{...die,isheld:!die.isheld}:die
             ))  
