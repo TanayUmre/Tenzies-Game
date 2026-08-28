@@ -133,64 +133,83 @@ export default function App() {
                 />);
 
     return (
-        <main>
-            <h1 className="title">Tenzie</h1>
-            <p className="instruction">
-                {gamewon
-                    ? "Congratulations! You won! Press New Game to start another game."
-                    : "Roll until all dice are the same. Click each die to freeze it at its current value between rolls."
-                }
-            </p>
-            <fieldset className="difficulty">
-                <legend className="name-diff">Difficulty</legend>
-                <label>
-                    <input
-                        type="radio"
-                        name="difficulty"
-                        value="easy"
-                        checked={difficulty==="easy"}
-                        onChange={(e)=>setDifficulty(e.target.value)}
-                    />
-                    Easy
-                </label>
-                <label>
-                    <input
-                        type="radio"
-                        name="difficulty"
-                        value="normal"
-                        checked={difficulty==="normal"}
-                        onChange={(e)=>setDifficulty(e.target.value)}
-                    />
-                    Normal
-                </label>
-                <label>
-                    <input
-                        type="radio"
-                        name="difficulty"
-                        value="hard"
-                        checked={difficulty==="hard"}
-                        onChange={(e)=>setDifficulty(e.target.value)}
-                    />
-                    Hard
-                </label>
-            </fieldset>
-            <p className="timer">
-                Time: {formattime(time)}
-            </p>
-            {gamewon && (
-                <p className="score">
-                    Score: {score}
-                </p>
-            )}
-            {gamewon && <Confetti mode="fall" particleCount={150} colors={['#ff577f', '#ff884b']}/>}
-            <div aria-live="polite" className="sronly">
-                {gamewon && <p>CONGRATULATION YOu WON!!! Press New Game to start another game.</p>}
-            </div>
+        <div className="Parent">
 
-            <div className={`dice-cont ${difficulty}`}>
-                {arr}
-            </div>
-            <button className="roll-dice" onClick={roll} ref={buttonref}>{gamewon?"New Game":"Roll"}</button>
-        </main>
+            <main>
+                <h1 className="title">Tenzie</h1>
+                <p className="instruction">
+                    {gamewon
+                        ? "Congratulations! You won! Press New Game to start another game."
+                        : "Roll until all dice are the same. Click each die to freeze it at its current value between rolls."
+                    }
+                </p>
+                {gamewon && (
+                    <p className="score">
+                        Score: {score}
+                    </p>
+                )}
+                {gamewon && <Confetti mode="fall" particleCount={150} colors={['#ff577f', '#ff884b']}/>}
+                <div aria-live="polite" className="sronly">
+                    {gamewon && <p>CONGRATULATION YOu WON!!! Press New Game to start another game.</p>}
+                </div>
+
+                <div className={`dice-cont ${difficulty}`}>
+                    {arr}
+                </div>
+                <button className="roll-dice" onClick={roll} ref={buttonref}>{gamewon?"New Game":"Roll"}</button>
+            </main>
+            <section className="game-info">
+                <div className="info-section difficulty-section">
+                    <h2>Difficulty</h2>
+                    <fieldset className={`difficulty ${difficulty}`}>
+                        <label>
+                            <input
+                                type="radio"
+                                name="difficulty"
+                                value="easy"
+                                checked={difficulty==="easy"}
+                                onChange={(e)=>setDifficulty(e.target.value)}
+                            />
+                            Easy
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                name="difficulty"
+                                value="normal"
+                                checked={difficulty==="normal"}
+                                onChange={(e)=>setDifficulty(e.target.value)}
+                            />
+                            Normal
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                name="difficulty"
+                                value="hard"
+                                checked={difficulty==="hard"}
+                                onChange={(e)=>setDifficulty(e.target.value)}
+                            />
+                            Hard
+                        </label>
+                    </fieldset>
+                </div>
+
+                <div className="info-section timer-section">
+                    <h2>Time</h2>
+                    <p className="timer">{formattime(time)}</p>
+                </div>
+
+                <div className="info-section scoring-section">
+                    <h2>Scoring System</h2>
+                    <p>Easy: ×1</p>
+                    <p>Normal: ×1.5</p>
+                    <p>Hard: ×2</p>
+                    <hr />
+                    <p>Time penalty: -20 points/sec</p>
+                    <p>Roll penalty: -100 points/roll</p>
+                </div>
+            </section>
+        </div>
     )
 }

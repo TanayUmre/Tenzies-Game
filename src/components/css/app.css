@@ -14,13 +14,12 @@ body {
 
 div#root {
     width: 100%;
-    max-width: 400px;
+    max-width: 900px;
 }
 
 main{
     background-color: #F5F5F5;
     min-height: 400px;
-    height: 100%;
     border-radius: 5px;
     display:flex;
     flex-direction: column;
@@ -30,22 +29,51 @@ main{
     box-sizing: border-box;
 }
 
+.Parent{
+    width:100%;
+    max-width:850px;
+    display:flex;
+    align-items:stretch;
+    justify-content:center;
+    gap:30px;
+}
+
+@media (max-width:700px) {
+    .Parent {
+        flex-direction:column;
+    }
+}
+
 .difficulty{
     font-family: "Karla",sans-serif;
     font-weight: 550;
     margin-bottom: 10px;
 }
 
-.timer{
-    font-family: "Karla",sans-serif;
-    font-weight: 550;
-    margin-bottom: 10px;
+.timer-section {
+    text-align: center;
 }
 
-.score{
-    font-family: "Karla",sans-serif;
-    font-weight: 550;
-    margin-bottom: 30px;
+.timer {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 2px;
+}
+
+.scoring-section {
+    text-align: center;
+}
+
+.scoring-section p {
+    margin: 10px 0;
+}
+
+.scoring-section hr {
+    width: 80%;
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    margin: 15px auto;
 }
 
 .name-diff{
@@ -114,4 +142,61 @@ button.roll-dice{
     clip: rect(0,0,0,0);
     white-space: nowrap;
     border: 0;
+}
+
+.difficulty {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 0;
+}
+
+.difficulty label {
+    cursor: pointer;
+}
+
+.difficulty-section:has(input[value="easy"]:checked) {
+    border-color: #4CAF50;
+}
+
+.difficulty-section:has(input[value="normal"]:checked) {
+    border-color: #FFB703;
+}
+
+.difficulty-section:has(input[value="hard"]:checked) {
+    border-color: #FF595E;
+}
+
+.game-info {
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.info-section {
+    background-color: #123B4D;
+    color: #F5F5F5;
+    border-radius: 8px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.info-section h2 {
+    margin: 0 0 15px;
+    text-align: center;
+    color: #FFFFFF;
+}
+
+@media (max-width:700px) {
+    .Parent {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .Parent > main,
+    .game-info {
+        width: 100%;
+        max-width: 400px;
+    }
 }
