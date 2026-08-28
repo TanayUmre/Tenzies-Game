@@ -37,6 +37,14 @@ main{
 }
 
 .timer{
+    font-family: "Karla",sans-serif;
+    font-weight: 550;
+    margin-bottom: 10px;
+}
+
+.score{
+    font-family: "Karla",sans-serif;
+    font-weight: 550;
     margin-bottom: 30px;
 }
 

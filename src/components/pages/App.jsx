@@ -14,11 +14,17 @@ export default function App() {
 
     const [timerRunning,setTimerRunning]=useState(false);
 
+    const [score,setScore]=useState(0);
+
     const diceCount={easy:8, normal:10, hard:12}[difficulty];
+
+    const [rolls,setRolls]=useState(0);
 
     const gamewon=(dice.every(die=>die.isheld) && dice.every(die=>die.value===dice[0].value));
 
     const buttonref=useRef(null);
+
+    const startTimeRef=useRef(null);
 
     useEffect(()=>{
         if(gamewon){
@@ -30,6 +36,9 @@ export default function App() {
         newdice(generateArray(diceCount));
         setTime(0);
         setTimerRunning(false);
+        setRolls(0);
+        setScore(0);
+        startTimeRef.current=null;
     },[diceCount]);
 
     useEffect(()=>{
@@ -47,6 +56,7 @@ export default function App() {
         if(gamewon)
         {
             setTimerRunning(false);
+            setScore(calcScore());
         }
     },[gamewon]);
 
@@ -71,6 +81,7 @@ export default function App() {
     {
         if(!gamewon)
         {
+            setRolls(prev=>prev+1);
             newdice(oldice=>oldice.map(die=>die.isheld?die:{...die,value:rollDie()}));
         }
         else
@@ -78,6 +89,9 @@ export default function App() {
             newdice(generateArray(diceCount));
             setTime(0);
             setTimerRunning(false);
+            setRolls(0);    
+            setScore(0);
+            startTimeRef.current=null;
         }
     }
 
@@ -88,11 +102,24 @@ export default function App() {
         }
         if(!timerRunning)
         {
+            startTimeRef.current=performance.now();
             setTimerRunning(true);
         }
         newdice(olddice=>olddice.map(die=>
                 die.id===id?{...die,isheld:!die.isheld}:die
-            ))  
+        ))  
+    }
+
+    function calcScore(){
+        const multi={
+            easy:1,
+            normal:1.5,
+            hard:2
+        }[difficulty];
+        const timepenalty=Math.floor(time/1000)*20;
+        const rollpenalty=rolls*100;
+        const final=(10000*multi)-timepenalty-rollpenalty;
+        return Math.max(0,Math.floor(final));
     }
 
     const arr=dice
@@ -150,6 +177,11 @@ export default function App() {
             <p className="timer">
                 Time: {formattime(time)}
             </p>
+            {gamewon && (
+                <p className="score">
+                    Score: {score}
+                </p>
+            )}
             {gamewon && <Confetti mode="fall" particleCount={150} colors={['#ff577f', '#ff884b']}/>}
             <div aria-live="polite" className="sronly">
                 {gamewon && <p>CONGRATULATION YOu WON!!! Press New Game to start another game.</p>}
