@@ -20,15 +20,11 @@ export default function App() {
 
     const [leaderboard,setleaderboard]=useState(getleaderboard);      
 
-    const diceCount={easy:8, normal:10, hard:12}[difficulty];
-
     const [rolls,setRolls]=useState(0);
 
     const gamewon=(dice.length>0 && dice.every(die=>die.isheld) && dice.every(die=>die.value===dice[0].value));
 
     const buttonref=useRef(null);
-
-    const startTimeRef=useRef(null);
 
     const hasSavedScored=useRef(false);
 
@@ -37,16 +33,6 @@ export default function App() {
             buttonref.current?.focus();
         }
     },[gamewon]);
-    
-    useEffect(()=>{
-        newdice(generateArray(diceCount));
-        setTime(0);
-        setTimerRunning(false);
-        setRolls(0);
-        setScore(0);
-        startTimeRef.current=null;
-        hasSavedScored.current=false;
-    },[diceCount]);
 
     useEffect(()=>{
         if(!timerRunning)
@@ -59,19 +45,36 @@ export default function App() {
         return ()=>clearInterval(timer);
     },[timerRunning])
 
+    function changeDifficulty(newDifficulty){
+        setDifficulty(newDifficulty);
+        newdice(generateArray({easy:8,normal:10,hard:12}[newDifficulty]));
+        setTime(0);
+        setTimerRunning(false);
+        setRolls(0);
+        setScore(0);
+        hasSavedScored.current=false;
+    }
+
     useEffect(()=>{
         if(gamewon && !hasSavedScored.current)
         {
             hasSavedScored.current=true;
             setTimerRunning(false);
-            const finscore=calcScore();
+            const multi={
+                easy:1,
+                normal:1.5,
+                hard:2
+            }[difficulty];
+            const timepenalty=Math.floor(time/1000)*20;
+            const rollpenalty=rolls*100;
+            const finscore=Math.max(0,Math.floor((10000*multi)-timepenalty-rollpenalty));
             setScore(finscore);
             const updated=addscore(
                 difficulty,rolls,finscore
             );
             setleaderboard(updated);
         }
-    },[gamewon]);
+    },[gamewon,difficulty,rolls,time]);
 
     function formattime(milliseconds){
         const min=Math.floor(milliseconds/60000);
@@ -99,12 +102,11 @@ export default function App() {
         }
         else
         {
-            newdice(generateArray(diceCount));
+            newdice(generateArray({easy:8,normal:10,hard:12}[difficulty]));
             setTime(0);
             setTimerRunning(false);
             setRolls(0);    
             setScore(0);
-            startTimeRef.current=null;
             hasSavedScored.current=false;
         }
     }
@@ -116,24 +118,11 @@ export default function App() {
         }
         if(!timerRunning)
         {
-            startTimeRef.current=performance.now();
             setTimerRunning(true);
         }
         newdice(olddice=>olddice.map(die=>
                 die.id===id?{...die,isheld:!die.isheld}:die
         ))  
-    }
-
-    function calcScore(){
-        const multi={
-            easy:1,
-            normal:1.5,
-            hard:2
-        }[difficulty];
-        const timepenalty=Math.floor(time/1000)*20;
-        const rollpenalty=rolls*100;
-        const final=(10000*multi)-timepenalty-rollpenalty;
-        return Math.max(0,Math.floor(final));
     }
 
     const arr=dice
@@ -183,7 +172,7 @@ export default function App() {
                                     name="difficulty"
                                     value="easy"
                                     checked={difficulty==="easy"}
-                                    onChange={(e)=>setDifficulty(e.target.value)}
+                                    onChange={(e)=>changeDifficulty(e.target.value)}
                                 />
                                 Easy
                             </label>
@@ -193,7 +182,7 @@ export default function App() {
                                     name="difficulty"
                                     value="normal"
                                     checked={difficulty==="normal"}
-                                    onChange={(e)=>setDifficulty(e.target.value)}
+                                    onChange={(e)=>changeDifficulty(e.target.value)}
                                 />
                                 Normal
                             </label>
@@ -203,7 +192,7 @@ export default function App() {
                                     name="difficulty"
                                     value="hard"
                                     checked={difficulty==="hard"}
-                                    onChange={(e)=>setDifficulty(e.target.value)}
+                                    onChange={(e)=>changeDifficulty(e.target.value)}
                                 />
                                 Hard
                             </label>
