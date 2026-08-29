@@ -3,6 +3,8 @@ import Die from "./die"
 import {useState,useRef,useEffect} from "react"
 import {nanoid} from "nanoid"
 import Confetti from "react-confetti-boom"
+import { getleaderboard,addscore } from "../../utils/leaderboard"
+import LeaderBoard from "./LeaderBoard"
 
 export default function App() {
 
@@ -16,19 +18,23 @@ export default function App() {
 
     const [score,setScore]=useState(0);
 
+    const [leaderboard,setleaderboard]=useState(getleaderboard);      
+
     const diceCount={easy:8, normal:10, hard:12}[difficulty];
 
     const [rolls,setRolls]=useState(0);
 
-    const gamewon=(dice.every(die=>die.isheld) && dice.every(die=>die.value===dice[0].value));
+    const gamewon=(dice.length>0 && dice.every(die=>die.isheld) && dice.every(die=>die.value===dice[0].value));
 
     const buttonref=useRef(null);
 
     const startTimeRef=useRef(null);
 
+    const hasSavedScored=useRef(false);
+
     useEffect(()=>{
         if(gamewon){
-            buttonref.current.focus();
+            buttonref.current?.focus();
         }
     },[gamewon]);
     
@@ -39,6 +45,7 @@ export default function App() {
         setRolls(0);
         setScore(0);
         startTimeRef.current=null;
+        hasSavedScored.current=false;
     },[diceCount]);
 
     useEffect(()=>{
@@ -53,10 +60,16 @@ export default function App() {
     },[timerRunning])
 
     useEffect(()=>{
-        if(gamewon)
+        if(gamewon && !hasSavedScored.current)
         {
+            hasSavedScored.current=true;
             setTimerRunning(false);
-            setScore(calcScore());
+            const finscore=calcScore();
+            setScore(finscore);
+            const updated=addscore(
+                difficulty,rolls,finscore
+            );
+            setleaderboard(updated);
         }
     },[gamewon]);
 
@@ -92,6 +105,7 @@ export default function App() {
             setRolls(0);    
             setScore(0);
             startTimeRef.current=null;
+            hasSavedScored.current=false;
         }
     }
 
@@ -161,42 +175,44 @@ export default function App() {
             <section className="game-info">
                 <div className="info-section difficulty-section">
                     <h2>Difficulty</h2>
-                    <fieldset className={`difficulty ${difficulty}`}>
-                        <label>
-                            <input
-                                type="radio"
-                                name="difficulty"
-                                value="easy"
-                                checked={difficulty==="easy"}
-                                onChange={(e)=>setDifficulty(e.target.value)}
-                            />
-                            Easy
-                        </label>
-                        <label>
-                            <input
-                                type="radio"
-                                name="difficulty"
-                                value="normal"
-                                checked={difficulty==="normal"}
-                                onChange={(e)=>setDifficulty(e.target.value)}
-                            />
-                            Normal
-                        </label>
-                        <label>
-                            <input
-                                type="radio"
-                                name="difficulty"
-                                value="hard"
-                                checked={difficulty==="hard"}
-                                onChange={(e)=>setDifficulty(e.target.value)}
-                            />
-                            Hard
-                        </label>
-                    </fieldset>
+                    <div className="options">
+                        <fieldset className={`difficulty`}>
+                            <label>
+                                <input
+                                    type="radio"
+                                    name="difficulty"
+                                    value="easy"
+                                    checked={difficulty==="easy"}
+                                    onChange={(e)=>setDifficulty(e.target.value)}
+                                />
+                                Easy
+                            </label>
+                            <label>
+                                <input
+                                    type="radio"
+                                    name="difficulty"
+                                    value="normal"
+                                    checked={difficulty==="normal"}
+                                    onChange={(e)=>setDifficulty(e.target.value)}
+                                />
+                                Normal
+                            </label>
+                            <label>
+                                <input
+                                    type="radio"
+                                    name="difficulty"
+                                    value="hard"
+                                    checked={difficulty==="hard"}
+                                    onChange={(e)=>setDifficulty(e.target.value)}
+                                />
+                                Hard
+                            </label>
+                        </fieldset>
+                    </div>
                 </div>
 
                 <div className="info-section timer-section">
-                    <h2>Time</h2>
+                    <h2 className="timerh2">Time</h2>
                     <p className="timer">{formattime(time)}</p>
                 </div>
 
@@ -210,6 +226,7 @@ export default function App() {
                     <p>Roll penalty: -100 points/roll</p>
                 </div>
             </section>
+            <LeaderBoard leaderboard={leaderboard}/>
         </div>
     )
 }
